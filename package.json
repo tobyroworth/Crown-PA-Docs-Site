@@ -9,8 +9,10 @@
   "private": true,
   "flat": true,
   "dependencies": {
+    "@polymer/app-layout": "^3.0.0-pre.1",
     "@polymer/polymer": "^3.0.0-pre.1",
-    "@webcomponents/webcomponentsjs": "^1.0.14"
+    "@webcomponents/webcomponentsjs": "^1.0.14",
+    "marked": "^0.3.6"
   },
   "resolutions": {
     "@webcomponents/webcomponentsjs": "1.0.14"
