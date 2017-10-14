@@ -1,0 +1,22 @@
+{
+  "name": "Crown-PA-Docs-Site",
+  "version": "0.1.0",
+  "description": "Documentation Viewer for Crown PA",
+  "main": "index.html",
+  "repository": "git@github.com:tobyroworth/Crown-PA-Docs-Site.git",
+  "author": "Toby Roworth <toby.roworth@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "flat": true,
+  "dependencies": {
+    "@polymer/app-layout": "^3.0.0-pre.1",
+    "@polymer/iron-iconset-svg": "^3.0.0-pre.1",
+    "@polymer/paper-icon-button": "^3.0.0-pre.1",
+    "@polymer/polymer": "^3.0.0-pre.1",
+    "@webcomponents/webcomponentsjs": "^1.0.14",
+    "marked": "^0.3.6"
+  },
+  "resolutions": {
+    "@webcomponents/webcomponentsjs": "1.0.14"
+  }
+}
