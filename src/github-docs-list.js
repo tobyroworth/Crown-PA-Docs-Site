@@ -54,14 +54,14 @@ export class GithubDocsList extends PolymerElement {
     super();
     
     this.github = new GithubAPI();
-    this.github.user = 'tobyroworth';
-    this.github.repo = 'LivingRoomPADocs';
+    // this.github.user = 'tobyroworth';
+    // this.github.repo = 'LivingRoomPADocs';
   }
   
-  ready() {
-    super.ready();
+  connectedCallback() {
+    super.connectedCallback();
     
-    this.getTree();
+    // this.getTree();
   }
 
   static get properties() {
@@ -69,11 +69,33 @@ export class GithubDocsList extends PolymerElement {
       tree: {
         type: Array,
         value: []
+      },
+      user: {
+        type: String,
+        observer: 'userChanged'
+      },
+      repo: {
+        type: String,
+        observer: 'repoChanged'
       }
     };
   }
   
+  userChanged(newVal) {
+    this.github.user = newVal;
+    this.getTree();
+  }
+  
+  repoChanged(newVal) {
+    this.github.repo = newVal;
+    this.getTree();
+  }
+  
   async getTree() {
+    if (!this.user || !this.repo) {
+      return;
+    }
+    
     let {tree} = await this.github.getMasterTree();
     
     tree = tree.filter((item) => {
@@ -81,6 +103,9 @@ export class GithubDocsList extends PolymerElement {
     });
     
     this.tree = tree;
+    
+    let event = new CustomEvent('tree-loaded');
+    this.dispatchEvent(event);
   }
   
   openDocs(e) {

@@ -35,6 +35,7 @@
     
     <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 
+    <script type="module" src="src/crown-docs-splash.js"></script>
     <script type="module" src="src/crown-docs-app.js"></script>
     
     <!--<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">-->
@@ -49,9 +50,72 @@
         font-family: 'Raleway', sans-serif;
         margin: 0;
       }
+      crown-docs-app {
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+      }
+      crown-docs-splash {
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background-color: whitesmoke;
+        display: grid;
+        grid-template-columns: 50% 50%;
+        grid-template-rows: 50% 50%;
+        grid-gap: 24px;
+      }
+      .quarter {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        color: white;
+        background-color: slategrey;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 0 4px slategrey;
+      }
+      .tl {
+        transform-origin: top left;
+      }
+      .tr {
+        transform-origin: top right;
+      }
+      .bl {
+        transform-origin: bottom left;
+      }
+      .br {
+        transform-origin: bottom right;
+      }
+      @keyframes grow {
+        from {
+          transform: scale(1);
+        }
+        to {
+          transform: scale(2.1);
+        }
+      }
     </style>
   </head>
   <body>
-    <crown-docs-app location="The Living Room"></crown-docs-app>
+    <crown-docs-app location="The Living Room">
+      <crown-docs-splash slot="splash">
+        <div slot="sites" class="quarter tl" style="background-color: limegreen" user="tobyroworth" repo="LivingRoomPADocs">The Living Room</div>
+        <div slot="sites" class="quarter tr" style="background-color: purple">Bishopshalt</div>
+        <div slot="sites" class="quarter bl">PA Basics</div>
+        <div slot="sites" class="quarter br">About</div>
+      </crown-docs-splash>
+    </crown-docs-app>
   </body>
 </html>
