@@ -8,22 +8,22 @@ export default class GithubAPI {
   }
   
   async getMasterTree() {
-    return await getBranchTree('master');
+    return await this.getBranchTree('master');
   }
   
   async getBranchTree(branch) {
     
-    let url = getBranchURL(branch);
+    let url = this.getBranchURL(branch);
     
-    let response = await getFromGithub(url);
+    let response = await this.getFromGithub(url);
     
-    return await getTree(url.commit.sha);
+    return await this.getTree(response.commit.sha);
   }
   
   async getTree(sha) {
-    let url = getTreeURL(sha);
+    let url = this.getTreeURL(sha);
     
-    return await getFromGithub(url);
+    return await this.getFromGithub(url);
   }
   
   async getFromGithub(url, type) {
