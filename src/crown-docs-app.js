@@ -1,5 +1,8 @@
 import {Element as PolymerElement} from "../node_modules/@polymer/polymer/polymer-element.js";
 
+import "../node_modules/@polymer/app-route/app-location.js";
+import "../node_modules/@polymer/app-route/app-route.js";
+
 import "../node_modules/@polymer/app-layout/app-drawer-layout/app-drawer-layout.js";
 import "../node_modules/@polymer/app-layout/app-drawer/app-drawer.js";
 import "../node_modules/@polymer/app-layout/app-header-layout/app-header-layout.js";
@@ -9,6 +12,7 @@ import "../node_modules/@polymer/paper-icon-button/paper-icon-button.js";
 import "../node_modules/@polymer/iron-iconset-svg/iron-iconset-svg.js";
 
 import "./github-docs-list.js";
+import "./github-doc.js";
 
 import GithubAPI from "./github-api.js";
 
@@ -29,37 +33,6 @@ const template = `
     background-color: limegreen;
     box-shadow: 0 1px 2px slategrey;
   }
-  #spinner {
-    width: 100%;
-    height: 100vh;
-  
-    background-color: limegreen;
-    opacity: 0;
-    transition: opacity 0.3s;
-    
-    position: absolute;
-  }
-  #spinner.spin {
-    opacity: 0.3;
-    animation-delay: 0.3s;
-    animation-duration: 1.5s;
-    animation-name: fadeIn;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
-    animation-fill-mode: both;
-    animation-timing-function: ease-in-out;
-  }
-  @keyframes fadeIn {
-    from {
-      opacity: 0.3
-    }
-    50% {
-      opacity: 0.6
-    }
-    to {
-      opacity: 0.3
-    }
-  }
   #splash {
     opacity: 1;
   }
@@ -78,19 +51,25 @@ const template = `
     }
   }
 </style>
+<app-location route="{{route}}"></app-location>
+<app-route 
+  route="{{route}}"
+  pattern="/:page/:user/:repo"
+  data="{{routeData}}"
+  tail="{{tail}}">
+</app-route>
 <app-drawer-layout>
   <app-drawer slot="drawer">
-    <github-docs-list user='{{user}}' repo='{{repo}}' on-open-doc="openDoc" on-tree-loaded="treeLoaded"></github-docs-list>
+    <github-docs-list user='[[routeData.user]]' repo='[[routeData.repo]]' on-open-doc="openDoc" on-tree-loaded="treeLoaded"></github-docs-list>
   </app-drawer>
   <app-header-layout>
     <app-header effects="waterfall">
       <app-toolbar>
         <paper-icon-button icon="crown-icons:menu" drawer-toggle></paper-icon-button>
-        <div main-title>Docs for {{repo}}</div>
+        <div main-title>Docs for [[repo]]</div>
       </app-toolbar>
     </app-header>
-    <div id="spinner"></div>
-    <div id="docs"></div>
+    <github-doc user='[[routeData.user]]' repo='[[routeData.repo]]' path='[[tail.path]]'></github-doc>
   </app-header-layout>
 </app-drawer-layout>
 <div id="splash">
@@ -142,11 +121,17 @@ export class CrownDocsApp extends PolymerElement {
   }
   
   async openDoc(e) {
-    this.$.spinner.classList.add('spin');
-    let url = this.github.getContentsURL(e.detail.path);
-    let response = await this.github.getFromGithub(url, 'HTML');
-    this.$.docs.innerHTML = response;
-    this.$.spinner.classList.remove('spin');
+    // this.$.spinner.classList.add('spin');
+    // let url = this.github.getContentsURL(e.detail.path);
+    // let response = await this.github.getFromGithub(url, 'HTML');
+    // this.$.docs.innerHTML = response;
+    // this.$.spinner.classList.remove('spin');
+    
+    let path = `/docs/${this.routeData.user}/${this.routeData.repo}/${e.detail.path}`;
+    path = path.replace('.md', '');
+    
+    window.history.pushState({}, null, path);
+    window.dispatchEvent(new CustomEvent('location-changed'));
   }
   
   async treeLoaded(e) {

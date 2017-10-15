@@ -71,23 +71,23 @@ export class GithubDocsList extends PolymerElement {
         value: []
       },
       user: {
-        type: String,
-        observer: 'userChanged'
+        type: String
       },
       repo: {
-        type: String,
-        observer: 'repoChanged'
+        type: String
       }
     };
   }
   
-  userChanged(newVal) {
-    this.github.user = newVal;
-    this.getTree();
+  static get observers() {
+    return [
+      'githubChanged(user, repo)'
+    ];
   }
   
-  repoChanged(newVal) {
-    this.github.repo = newVal;
+  githubChanged(user, repo, path) {
+    this.github.user = user;
+    this.github.repo = repo;
     this.getTree();
   }
   
