@@ -60,22 +60,42 @@ const template = `
       opacity: 0.3
     }
   }
+  #splash {
+    opacity: 1;
+  }
+  #splash.fadeOut {
+    animation-duration: 0.5s;
+    animation-name: fadeOut;
+    animation-fill-mode: both;
+    animation-timing-function: ease-in-out;
+  }
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
 </style>
 <app-drawer-layout>
   <app-drawer slot="drawer">
-    <github-docs-list on-open-doc="openDoc"></github-docs-list>
+    <github-docs-list user='{{user}}' repo='{{repo}}' on-open-doc="openDoc" on-tree-loaded="treeLoaded"></github-docs-list>
   </app-drawer>
   <app-header-layout>
     <app-header effects="waterfall">
       <app-toolbar>
         <paper-icon-button icon="crown-icons:menu" drawer-toggle></paper-icon-button>
-        <div main-title>Docs for [[location]]</div>
+        <div main-title>Docs for {{repo}}</div>
       </app-toolbar>
     </app-header>
     <div id="spinner"></div>
     <div id="docs"></div>
   </app-header-layout>
 </app-drawer-layout>
+<div id="splash">
+  <slot name="splash"></slot>
+</div>
 <iron-iconset-svg size="24" name="crown-icons">
 <svg><defs>
 <g id="menu"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path></g>
@@ -92,20 +112,33 @@ export class CrownDocsApp extends PolymerElement {
     super();
     
     this.github = new GithubAPI();
-    this.github.user = 'tobyroworth';
-    this.github.repo = 'LivingRoomPADocs';
   }
   
-  ready() {
-    super.ready();
+  connectedCallback() {
+    super.connectedCallback();
+    
+    this.addEventListener('open-site', this.openSite);
   }
 
   static get properties() {
     return {
-      location: {
-        type: String
+      user: {
+        type: String,
+        observer: 'userChanged'
+      },
+      repo: {
+        type: String,
+        observer: 'repoChanged'
       }
     };
+  }
+  
+  userChanged(newVal) {
+    this.github.user = newVal;
+  }
+  
+  repoChanged(newVal) {
+    this.github.repo = newVal;
   }
   
   async openDoc(e) {
@@ -114,6 +147,18 @@ export class CrownDocsApp extends PolymerElement {
     let response = await this.github.getFromGithub(url, 'HTML');
     this.$.docs.innerHTML = response;
     this.$.spinner.classList.remove('spin');
+  }
+  
+  async treeLoaded(e) {
+    this.$.splash.addEventListener('animationend', () => {
+      this.$.splash.style.display = 'none';
+    });
+    this.$.splash.classList.add('fadeOut');
+  }
+  
+  openSite(e) {
+    this.user = e.detail.user;
+    this.repo = e.detail.repo;
   }
 }
 
