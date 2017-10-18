@@ -14,8 +14,6 @@ import "../node_modules/@polymer/iron-iconset-svg/iron-iconset-svg.js";
 import "./github-docs-list.js";
 import "./github-doc.js";
 
-import GithubAPI from "./github-api.js";
-
 const template = `
 <style>
   :host {
@@ -54,22 +52,22 @@ const template = `
 <app-location route="{{route}}"></app-location>
 <app-route 
   route="{{route}}"
-  pattern="/:page/:user/:repo"
+  pattern="/:page/:site"
   data="{{routeData}}"
   tail="{{tail}}">
 </app-route>
 <app-drawer-layout>
   <app-drawer slot="drawer">
-    <github-docs-list user='[[routeData.user]]' repo='[[routeData.repo]]' on-open-doc="openDoc" on-tree-loaded="treeLoaded"></github-docs-list>
+    <github-docs-list site='[[_getSite(routeData.site)]]' path='[[tail.path]]' on-open-doc="openDoc" on-tree-loaded="treeLoaded"></github-docs-list>
   </app-drawer>
   <app-header-layout>
     <app-header effects="waterfall">
       <app-toolbar>
         <paper-icon-button icon="crown-icons:menu" drawer-toggle></paper-icon-button>
-        <div main-title>Docs for [[repo]]</div>
+        <div main-title>[[_getSite(routeData.site, 'name')]]</div>
       </app-toolbar>
     </app-header>
-    <github-doc user='[[routeData.user]]' repo='[[routeData.repo]]' path='[[tail.path]]'></github-doc>
+    <github-doc site='[[_getSite(routeData.site)]]' path='[[tail.path]]'></github-doc>
   </app-header-layout>
 </app-drawer-layout>
 <div id="splash">
@@ -89,45 +87,44 @@ export class CrownDocsApp extends PolymerElement {
 
   constructor() {
     super();
-    
-    this.github = new GithubAPI();
   }
   
   connectedCallback() {
     super.connectedCallback();
-    
-    this.addEventListener('open-site', this.openSite);
   }
 
   static get properties() {
     return {
-      user: {
-        type: String,
-        observer: 'userChanged'
-      },
-      repo: {
-        type: String,
-        observer: 'repoChanged'
+      sites: {
+        type: Object,
+        value: () => {
+          return {
+            'TheLivingRoom': {
+              name: 'The Living Room',
+              user: 'tobyroworth',
+              repo: 'LivingRoomPADocs',
+              rootPath: 'docs'
+            }
+          };
+        }
       }
     };
   }
   
-  userChanged(newVal) {
-    this.github.user = newVal;
-  }
-  
-  repoChanged(newVal) {
-    this.github.repo = newVal;
+  _getSite(site, prop) {
+    if (!site) {
+      return;
+    }
+    if (prop) {
+      return this.sites[site][prop];
+    } else {
+      return this.sites[site];
+    }
   }
   
   async openDoc(e) {
-    // this.$.spinner.classList.add('spin');
-    // let url = this.github.getContentsURL(e.detail.path);
-    // let response = await this.github.getFromGithub(url, 'HTML');
-    // this.$.docs.innerHTML = response;
-    // this.$.spinner.classList.remove('spin');
     
-    let path = `/docs/${this.routeData.user}/${this.routeData.repo}/${e.detail.path}`;
+    let path = `/docs/${this.routeData.site}${e.detail.path}`;
     path = path.replace('.md', '');
     
     window.history.pushState({}, null, path);
@@ -139,11 +136,6 @@ export class CrownDocsApp extends PolymerElement {
       this.$.splash.style.display = 'none';
     });
     this.$.splash.classList.add('fadeOut');
-  }
-  
-  openSite(e) {
-    this.user = e.detail.user;
-    this.repo = e.detail.repo;
   }
 }
 

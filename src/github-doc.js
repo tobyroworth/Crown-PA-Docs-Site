@@ -57,11 +57,11 @@ export class GithubDoc extends PolymerElement {
 
   static get properties() {
     return {
-      user: {
-        type: String
-      },
-      repo: {
-        type: String
+      site: {
+        type: Object,
+        value: () => {
+          return {};
+        }
       },
       path: {
         type: String
@@ -71,7 +71,7 @@ export class GithubDoc extends PolymerElement {
   
   static get observers() {
     return [
-      'githubChanged(user, repo, path)'
+      'githubChanged(site.user, site.repo, path)'
     ];
   }
   
@@ -85,7 +85,9 @@ export class GithubDoc extends PolymerElement {
   
   async openDoc(path) {
     this.$.spinner.classList.add('spin');
-    let url = this.github.getContentsURL(`${path}.md`);
+    path = path.replace(/_/g, ' ');
+    path = `${this.site.rootPath}${path}.md`;
+    let url = this.github.getContentsURL(path);
     let response = await this.github.getFromGithub(url, 'HTML');
     this.$.docs.innerHTML = response;
     this.$.spinner.classList.remove('spin');
