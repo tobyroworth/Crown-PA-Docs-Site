@@ -12,6 +12,13 @@
     "@polymer/iron-scroll-target-behavior" "^3.0.0-pre.1"
     "@polymer/polymer" "^3.0.0-pre.1"
 
+"@polymer/app-route@^3.0.0-pre.1":
+  version "3.0.0-pre.1"
+  resolved "https://registry.yarnpkg.com/@polymer/app-route/-/app-route-3.0.0-pre.1.tgz#4fc8f895f899e38461413f4ed1dfa8520aee4396"
+  dependencies:
+    "@polymer/iron-location" "^3.0.0-pre.1"
+    "@polymer/polymer" "^3.0.0-pre.1"
+
 "@polymer/font-roboto@^3.0.0-pre.1":
   version "3.0.0-pre.1"
   resolved "https://registry.yarnpkg.com/@polymer/font-roboto/-/font-roboto-3.0.0-pre.1.tgz#3b989a3b7c7d7351d4d816f8136d708512b0bd10"
@@ -64,6 +71,12 @@
     "@polymer/iron-meta" "^3.0.0-pre.1"
     "@polymer/polymer" "^3.0.0-pre.1"
 
+"@polymer/iron-location@^3.0.0-pre.1":
+  version "3.0.0-pre.1"
+  resolved "https://registry.yarnpkg.com/@polymer/iron-location/-/iron-location-3.0.0-pre.1.tgz#e2fb5f817729102fcb1838f14a67c7da57d939fe"
+  dependencies:
+    "@polymer/polymer" "^3.0.0-pre.1"
+
 "@polymer/iron-media-query@^3.0.0-pre.1":
   version "3.0.0-pre.1"
   resolved "https://registry.yarnpkg.com/@polymer/iron-media-query/-/iron-media-query-3.0.0-pre.1.tgz#5738c8d741574bd71eb740d2f9f073062d4a8510"
@@ -85,6 +98,12 @@
 "@polymer/iron-scroll-target-behavior@^3.0.0-pre.1":
   version "3.0.0-pre.1"
   resolved "https://registry.yarnpkg.com/@polymer/iron-scroll-target-behavior/-/iron-scroll-target-behavior-3.0.0-pre.1.tgz#39f5754efdf7083fb82c295a3c94a30e57fbbacf"
+  dependencies:
+    "@polymer/polymer" "^3.0.0-pre.1"
+
+"@polymer/iron-selector@^3.0.0-pre.1":
+  version "3.0.0-pre.1"
+  resolved "https://registry.yarnpkg.com/@polymer/iron-selector/-/iron-selector-3.0.0-pre.1.tgz#e495c3f5ba5498ccfeccb94dded536d10807fb7c"
   dependencies:
     "@polymer/polymer" "^3.0.0-pre.1"
 

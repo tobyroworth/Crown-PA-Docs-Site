@@ -58,8 +58,11 @@ export class CrownDocsSplash extends PolymerElement {
   
   openSite(e) {
     e.target.classList.add("grow");
-    let event = new CustomEvent('open-site', {bubbles: true, detail: {repo: e.target.getAttribute('repo'), user: e.target.getAttribute('user')}});
-    this.dispatchEvent(event);
+    // let event = new CustomEvent('open-site', {bubbles: true, detail: {repo: e.target.getAttribute('site')}});
+    // this.dispatchEvent(event);
+    
+    window.history.pushState({}, null, `/docs/${e.target.getAttribute('site')}`);
+    window.dispatchEvent(new CustomEvent('location-changed'));
   }
 }
 

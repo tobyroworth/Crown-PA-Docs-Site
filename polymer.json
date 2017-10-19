@@ -1,0 +1,8 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/crown-docs-app.html",
+  "sources": [
+   "src/**",
+   "node_modules/**"
+  ]
+}
