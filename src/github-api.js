@@ -36,6 +36,8 @@ export default class GithubAPI {
     
     let response = await fetch(url, init);
     switch (type) {
+      case 'raw':
+        return response;
       case 'HTML':
         return await response.text();
       case 'JSON':

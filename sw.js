@@ -15,11 +15,20 @@ revCacheManager.addToCacheList({
 });
 
 self.addEventListener('install', function(event) {
-  console.log("Service Worker installing...");
+  console.info('Service Worker installing...');
   
-  event.waitUntil(
-    revCacheManager.install()
-  );
+  let install = () => {
+    return revCacheManager.install()
+    .then(() => {
+      console.info('Service Worker install  & precache successful');
+    })
+    .catch((err) => {
+      console.error(`Service Worker install failed: ${err}`);
+      return Promise.reject(err);
+    });
+  };
+  
+  event.waitUntil(install());
   
 });
 
@@ -37,7 +46,7 @@ self.addEventListener('fetch', function(event) {
   
   if (`${url.origin}/` === scope) {
   
-    if (url.pathname.match(/\/docs\//)) {
+    if (/\/docs\//.test(url.pathname)) {
       event.respondWith(serveHome(event));
     } else {
       event.respondWith(staleWhileRevalidate(event));
@@ -47,25 +56,47 @@ self.addEventListener('fetch', function(event) {
   
   if (url.hostname == "api.github.com") {
     
+    event.respondWith(staleWhileRevalidate(event, 'github'));
+    
+    if (/\/trees\//.test(url.pathname)) {
+      // do staleWhileRevalidate, but also put tree's leaves names and shas into idb 
+      
+      // start downloading files into cache
+    }
+    if (/\/content\//.test(url.pathname)) {
+      // check idb for cached content
+      
+      // also check for update and notify page when downloaded
+      
+      // then delete old version
+    }
   }
   
   
   
 });
 
-async function staleWhileRevalidate(event) {
-  let cache = await caches.open('precache');
-  let response = cache.match(event.request);
+async function staleWhileRevalidate(event, cachename) {
+  let cache = await caches.open(cachename || 'precache');
+  
+  // set up revalidation request
   let fetchPromise = fetch(event.request)
   .then((networkResponse) => {
     cache.put(event.request, networkResponse.clone());
     return networkResponse;
+  })
+  .catch((err) => {
+    console.info(err);
   });
+  
+  let response = await cache.match(event.request);
   return response || fetchPromise;
 };
 
-async function serveHome() {
-  let cache = await caches.open('precache');
+async function serveHome(event, cachename) {
+  let cache = await caches.open(cachename || 'precache');
+  
   let response = cache.match(`${self.registration.scope}index.html`);
+  
   return response;
 };
