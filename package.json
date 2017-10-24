@@ -16,6 +16,7 @@
     "@polymer/paper-icon-button": "^3.0.0-pre.1",
     "@polymer/polymer": "^3.0.0-pre.1",
     "@webcomponents/webcomponentsjs": "^1.0.14",
+    "idb-keyval": "^2.3.0",
     "workbox-precaching": "^2.1.0",
     "workbox-routing": "^2.1.0",
     "workbox-runtime-caching": "^2.0.3"

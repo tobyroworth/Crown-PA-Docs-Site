@@ -3,8 +3,8 @@
 //import fileManifest from '/sw_manifest.js';
 
 importScripts('/node_modules/workbox-precaching/build/importScripts/workbox-precaching.prod.v2.1.0.js');
-importScripts('/node_modules/workbox-runtime-caching/build/importScripts/workbox-runtime-caching.prod.v2.0.3.js');
-importScripts('/node_modules/workbox-routing/build/importScripts/workbox-routing.prod.v2.1.0.js');
+
+importScripts('/node_modules/idb-keyval/idb-keyval.js');
 
 importScripts('/sw_manifest.js');
 
@@ -13,6 +13,27 @@ const revCacheManager = new workbox.precaching.RevisionedCacheManager({cacheName
 revCacheManager.addToCacheList({
   revisionedFiles: __file_manifest
 });
+
+/**
+ * Remove once module workers arrive, this was lazy
+ */
+ 
+const github = {};
+
+github.headers = new Headers();
+github.headers.append('Accept', 'application/vnd.github.v3+json');
+github.headers.append('Accept', 'application/vnd.github.v3.html'); 
+
+github.init = {
+  method: 'GET',
+  headers: github.headers,
+  mode: 'cors',
+  cache: 'default'
+};
+
+/**
+ * ^^ end
+ */
 
 self.addEventListener('install', function(event) {
   console.info('Service Worker installing...');
@@ -49,26 +70,45 @@ self.addEventListener('fetch', function(event) {
     if (/\/docs\//.test(url.pathname)) {
       event.respondWith(serveHome(event));
     } else {
-      event.respondWith(staleWhileRevalidate(event));
+      let response = staleWhileRevalidate(event).then((resp) => {
+        return resp.stale || resp.fresh;
+      });
+      event.respondWith(response);
     }
   
   }
   
   if (url.hostname == "api.github.com") {
     
-    event.respondWith(staleWhileRevalidate(event, 'github'));
-    
     if (/\/trees\//.test(url.pathname)) {
       // do staleWhileRevalidate, but also put tree's leaves names and shas into idb 
       
-      // start downloading files into cache
-    }
-    if (/\/content\//.test(url.pathname)) {
-      // check idb for cached content
+      let response = staleWhileRevalidate(event, 'github').then((resp) => {
+        
+        let fresh = resp.fresh.then((freshResp) => {
+          cacheGithubTree(freshResp.clone());
+          return freshResp;
+        }).catch(console.error);
+        
+        return resp.stale || fresh;
+      });
       
-      // also check for update and notify page when downloaded
+      event.respondWith(response);
       
-      // then delete old version
+    // } else if (/\/contents\//.test(url.pathname)) {
+      
+    //   let response = staleWhileRevalidate(event, 'github').then((resp) => {
+    //     return resp.stale || resp.fresh;
+    //   });
+      
+    //   event.respondWith(response);
+    } else {
+      
+      let response = staleWhileRevalidate(event, 'github').then((resp) => {
+        return resp.stale || resp.fresh;
+      });
+      
+      event.respondWith(response);
     }
   }
   
@@ -82,15 +122,18 @@ async function staleWhileRevalidate(event, cachename) {
   // set up revalidation request
   let fetchPromise = fetch(event.request)
   .then((networkResponse) => {
-    cache.put(event.request, networkResponse.clone());
+    cache.put(event.request.url, networkResponse.clone());
     return networkResponse;
   })
   .catch((err) => {
     console.info(err);
   });
   
-  let response = await cache.match(event.request);
-  return response || fetchPromise;
+  let response = cache.match(event.request.url);
+  return {
+    stale: response,
+    fresh: fetchPromise
+  };
 };
 
 async function serveHome(event, cachename) {
@@ -100,3 +143,30 @@ async function serveHome(event, cachename) {
   
   return response;
 };
+
+async function cacheGithubTree(response) {
+  let parsed = await response.json()
+  let tree = parsed.tree;
+      
+  // start downloading files into cache
+  
+  tree.forEach(async (leaf) => {
+    if (leaf.type === 'blob') {
+      
+      let url = leaf.url.replace(/\/git\/.*/, `/contents/${leaf.path}`);
+      let sha = idbKeyval.get(url);
+      
+      if (sha !== leaf.sha) {
+        
+        let response = await fetch(url, github.init);
+        
+        let cache = await caches.open('github');
+        
+        await cache.put(url, response);
+        
+        idbKeyval.set(url, leaf.sha);
+        
+      }
+    }
+  });
+}
