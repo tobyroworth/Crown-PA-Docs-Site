@@ -65,7 +65,7 @@ gulp.task('default', (callback) => {
 gulp.task('copy', ['copy:root', 'copy:src', 'copy:deps']);
 
 gulp.task('full', (callback) => {
-  runSequence('clean:build', 'default', callback);
+  runSequence('test', 'clean:build', 'default', callback);
 });
 
 gulp.task('clean:build', function() {
@@ -119,6 +119,8 @@ gulp.task('sw:manifest', function() {
     format: 'iife'
   });
 });
+
+gulp.task('test', ['lint']);
 
 gulp.task('lint', () => {
   return gulp.src([
