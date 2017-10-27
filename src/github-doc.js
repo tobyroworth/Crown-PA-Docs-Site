@@ -83,8 +83,9 @@ export class GithubDoc extends PolymerElement {
     }
   }
   
-  async openDoc(path) {
+  async openDoc(p) {
     this.$.spinner.classList.add('spin');
+    let path = p;
     path = path.replace(/_/g, ' ');
     path = `${this.site.rootPath}${path}.md`;
     let url = this.github.getContentsURL(path);

@@ -90,18 +90,6 @@ export class GithubDocsList extends PolymerElement {
     };
   }
   
-  static get observers() {
-    return [
-      'githubChanged(site.user, site.repo)'
-    ];
-  }
-  
-  githubChanged(user, repo, path) {
-    this.github.user = user;
-    this.github.repo = repo;
-    this.getTree();
-  }
-  
   async getTree() {
     if (!this.site.user || !this.site.repo) {
       return;
@@ -109,7 +97,7 @@ export class GithubDocsList extends PolymerElement {
     
     let {tree} = await this.github.getMasterTree();
     
-    let rootTest = new RegExp(`^${this.site.rootPath}\/.*`);
+    let rootTest = new RegExp(`^${this.site.rootPath}/.*`);
     
     tree = tree.filter((item) => {
       return rootTest.test(item.path);
@@ -129,7 +117,7 @@ export class GithubDocsList extends PolymerElement {
   }
   
   _cleanPath(path) {
-    let cleaner = new RegExp(`^${this.site.rootPath}(\/*[^\.]*)(?:\.md)*`);
+    let cleaner = new RegExp(`^${this.site.rootPath}(/*[^.]*)(?:.md)*`);
     let clean = cleaner.exec(path)[1];
     clean = clean.replace(/\s/g, '_');
     return clean;

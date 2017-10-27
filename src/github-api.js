@@ -7,8 +7,8 @@ export default class GithubAPI {
     this.headers.append('Accept', 'application/vnd.github.v3.html');
   }
   
-  async getMasterTree() {
-    return await this.getBranchTree('master');
+  getMasterTree() {
+    return this.getBranchTree('master');
   }
   
   async getBranchTree(branch) {
@@ -17,13 +17,13 @@ export default class GithubAPI {
     
     let response = await this.getFromGithub(url);
     
-    return await this.getTree(response.commit.sha);
+    return this.getTree(response.commit.sha);
   }
   
-  async getTree(sha) {
+  getTree(sha) {
     let url = this.getTreeURL(sha);
     
-    return await this.getFromGithub(url);
+    return this.getFromGithub(url);
   }
   
   async getFromGithub(url, type) {
@@ -39,10 +39,10 @@ export default class GithubAPI {
       case 'raw':
         return response;
       case 'HTML':
-        return await response.text();
+        return response.text();
       case 'JSON':
       default:
-        return await response.json();
+        return response.json();
     }
   }
   
