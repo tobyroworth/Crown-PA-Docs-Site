@@ -13,11 +13,11 @@
     <meta name="msapplication-tap-highlight" content="no">
 
     <!-- Web Application Manifest -->
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/manifest.json">
 
     <!-- Add to homescreen for Chrome on Android -->
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Web Starter Kit">
+    <meta name="application-name" content="Crown PA Docs">
     <link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon-192x192.png">
 
     <!-- Add to homescreen for Safari on iOS -->
@@ -27,16 +27,16 @@
     <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">
 
     <!-- Tile icon for Win8 (144x144 + tile color) -->
-    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileImage" content="/images/touch/ms-touch-icon-144x144-precomposed.png">
     <meta name="msapplication-TileColor" content="#32CD32">
 
     <!-- Color the status bar on mobile devices -->
     <meta name="theme-color" content="#32CD32">
     
-    <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="/node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 
-    <script type="module" src="src/crown-docs-splash.js"></script>
-    <script type="module" src="src/crown-docs-app.js"></script>
+    <script type="module" src="/src/crown-docs-splash.js"></script>
+    <script type="module" src="/src/crown-docs-app.js"></script>
     
     <!--<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">-->
     
@@ -111,11 +111,24 @@
   <body>
     <crown-docs-app location="The Living Room">
       <crown-docs-splash slot="splash">
-        <div slot="sites" class="quarter tl" style="background-color: limegreen" user="tobyroworth" repo="LivingRoomPADocs">The Living Room</div>
-        <div slot="sites" class="quarter tr" style="background-color: purple">Bishopshalt</div>
+        <div slot="sites" class="quarter tl" style="background-color: limegreen" site="TheLivingRoom">The Living Room</div>
+        <div slot="sites" class="quarter tr" style="background-color: purple" site="Bishopshalt">Bishopshalt</div>
         <div slot="sites" class="quarter bl">PA Basics</div>
         <div slot="sites" class="quarter br">About</div>
       </crown-docs-splash>
     </crown-docs-app>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js').then(function(registration) {
+            // Registration was successful
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          }, function(err) {
+            // registration failed :(
+            console.log('ServiceWorker registration failed: ', err);
+          });
+        });
+      }
+    </script>
   </body>
 </html>
