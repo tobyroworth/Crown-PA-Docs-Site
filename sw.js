@@ -1,16 +1,16 @@
-//import RevisionedCacheManager from '/node_modules/workbox-precaching/build/modules/workbox-precaching.prod.v2.1.0.mjs';
-
-//import fileManifest from '/sw_manifest.js';
-
 importScripts('/node_modules/workbox-precaching/build/importScripts/workbox-precaching.prod.v2.1.0.js');
+/* global workbox */
 
 importScripts('/node_modules/idb-keyval/idb-keyval.js');
+/* global idbKeyval */
 
 importScripts('/sw_manifest.js');
+/* global __file_manifest */
 
 const revCacheManager = new workbox.precaching.RevisionedCacheManager({cacheName: 'precache'});
 
 revCacheManager.addToCacheList({
+  // eslint-disable-next-line camelcase
   revisionedFiles: __file_manifest
 });
 
@@ -22,7 +22,7 @@ const github = {};
 
 github.headers = new Headers();
 github.headers.append('Accept', 'application/vnd.github.v3+json');
-github.headers.append('Accept', 'application/vnd.github.v3.html'); 
+github.headers.append('Accept', 'application/vnd.github.v3.html');
 
 github.init = {
   method: 'GET',
@@ -78,7 +78,7 @@ self.addEventListener('fetch', function(event) {
   
   }
   
-  if (url.hostname == "api.github.com") {
+  if (url.hostname === "api.github.com") {
     
     if (/\/trees\//.test(url.pathname)) {
       // do staleWhileRevalidate, but also put tree's leaves names and shas into idb 
@@ -112,8 +112,6 @@ self.addEventListener('fetch', function(event) {
     }
   }
   
-  
-  
 });
 
 async function staleWhileRevalidate(event, cachename) {
@@ -134,7 +132,7 @@ async function staleWhileRevalidate(event, cachename) {
     stale: response,
     fresh: fetchPromise
   };
-};
+}
 
 async function serveHome(event, cachename) {
   let cache = await caches.open(cachename || 'precache');
@@ -142,10 +140,10 @@ async function serveHome(event, cachename) {
   let response = cache.match(`${self.registration.scope}index.html`);
   
   return response;
-};
+}
 
 async function cacheGithubTree(response) {
-  let parsed = await response.json()
+  let parsed = await response.json();
   let tree = parsed.tree;
       
   // start downloading files into cache
@@ -158,11 +156,11 @@ async function cacheGithubTree(response) {
       
       if (sha !== leaf.sha) {
         
-        let response = await fetch(url, github.init);
+        let resp = await fetch(url, github.init);
         
         let cache = await caches.open('github');
         
-        await cache.put(url, response);
+        await cache.put(url, resp);
         
         idbKeyval.set(url, leaf.sha);
         

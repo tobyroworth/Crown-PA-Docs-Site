@@ -43,11 +43,9 @@ export class CrownDocsSplash extends PolymerElement {
   
     this.$.sites.assignedNodes().forEach((el) => {
       el.addEventListener("click", this.openSite);
-    })
+    });
   }
   
-  
-
   static get properties() {
     return {
       location: {

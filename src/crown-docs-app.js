@@ -113,7 +113,7 @@ export class CrownDocsApp extends PolymerElement {
   
   _getSite(site, prop) {
     if (!site) {
-      return;
+      return null;
     }
     if (prop) {
       return this.sites[site][prop];
@@ -122,7 +122,7 @@ export class CrownDocsApp extends PolymerElement {
     }
   }
   
-  async openDoc(e) {
+  openDoc(e) {
     
     let path = `/docs/${this.routeData.site}${e.detail.path}`;
     path = path.replace('.md', '');
@@ -131,7 +131,7 @@ export class CrownDocsApp extends PolymerElement {
     window.dispatchEvent(new CustomEvent('location-changed'));
   }
   
-  async treeLoaded(e) {
+  treeLoaded() {
     this.$.splash.addEventListener('animationend', () => {
       this.$.splash.style.display = 'none';
     });
