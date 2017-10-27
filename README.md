@@ -1,6 +1,7 @@
 # Crown-PA-Docs-Site
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://travis-ci.org/tobyroworth/Crown-PA-Docs-Site.svg?branch=iss15)](https://travis-ci.org/tobyroworth/Crown-PA-Docs-Site)
 
 Documentation viewer for Crown PA, built using Polymer 3.0 with the Github API for the data layer.
 
