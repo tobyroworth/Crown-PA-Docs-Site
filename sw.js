@@ -81,7 +81,7 @@ self.addEventListener('fetch', function(event) {
   if (url.hostname === "api.github.com") {
     
     if (/\/trees\//.test(url.pathname)) {
-      // do staleWhileRevalidate, but also put tree's leaves names and shas into idb 
+      // do staleWhileRevalidate, but also put tree's leaves names and shas into idb
       
       let response = staleWhileRevalidate(event, 'github').then((resp) => {
         
