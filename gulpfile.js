@@ -2,12 +2,13 @@ const gulp = require('gulp');
 
 const runSequence = require('run-sequence');
 
-const glob = require('glob');
+// const glob = require('glob');
 const path = require('path');
 
 const del = require('del');
 
 const rollup = require('rollup');
+const through = require('through2');
 
 const workboxBuild = require('workbox-build');
 
@@ -15,47 +16,39 @@ const eslint = require('gulp-eslint');
 
 const BUILD_DIR = 'build/';
 
-async function dependencies() {
+function dependencies() {
   
-  let deps = await new Promise((resolve, reject) => {
-    glob('src/**.js', {}, (err, files) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(files);
-      }
-    });
-  }).catch((err) => {
-    console.error(err);
-    return null;
-  });
+  let deps = new Set([]);
   
-  if (!deps) {
-    return null;
-  }
-  
-  let seen = {};
-  let modules = [];
-  
-  for (let i = 0; i < deps.length; i++) {
-    
-    let dep = deps[i];
+  let stream = through.obj(async function(file, enc, callback) {
     
     let bundle = await rollup.rollup({
-      input: dep
+      input: file.path
     });
     
     bundle.modules.forEach((module) => {
       module.dependencies.forEach((dependency) => {
-        if (!seen.hasOwnProperty(dependency)) {
-          seen[dependency] = true;
-          modules.push(path.relative(process.cwd(), dependency));
+        let depPath = path.relative(process.cwd(), dependency);
+        if (!deps.has(depPath)) {
+          deps.add(depPath);
         }
       });
     });
-  }
   
-  return modules;
+    callback();
+  },
+  function (callback) {
+    let src = gulp.src(Array.from(deps), {base: '.'});
+    src.on("data", (file) => {
+      // eslint-disable-next-line no-invalid-this
+      this.push(file);
+    });
+    src.on("finish", () => {
+      callback();
+    });
+  });
+  
+  return stream;
 }
 
 gulp.task('default', (callback) => {
@@ -88,11 +81,12 @@ gulp.task('copy:src', function() {
   .pipe(gulp.dest(`${BUILD_DIR}/`));
 });
 
-gulp.task('copy:deps', async function() {
+gulp.task('copy:deps', function() {
   
-  let deps = await dependencies();
+  // let deps = await dependencies();
   
-  return gulp.src(deps, {base: '.'})
+  return gulp.src('src/**.js', {base: '.'})
+  .pipe(dependencies())
   .pipe(gulp.dest(`${BUILD_DIR}/`));
 });
 
@@ -109,7 +103,7 @@ gulp.task('sw', ['sw:manifest', 'copy:sw']);
 
 gulp.task('sw:manifest', function() {
   
-  workboxBuild.generateFileManifest({
+  return workboxBuild.generateFileManifest({
     manifestDest: `${BUILD_DIR}/sw_manifest.js`,
     globDirectory: `${BUILD_DIR}/`,
     globPatterns: ['**/*.{html,js,mjs,css}'],

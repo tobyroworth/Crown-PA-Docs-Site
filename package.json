@@ -55,16 +55,25 @@
     "ansi-regex": "3.0.0",
     "lodash": "4.17.4",
     "lru-cache": "4.1.1",
-    "acorn": "5.1.2"
+    "acorn": "5.1.2",
+    "define-property": "1.0.0",
+    "extend-shallow": "3.0.2",
+    "is-extendable": "1.0.1",
+    "is-descriptor": "1.0.1",
+    "debug": "3.1.0",
+    "has-value": "1.0.0",
+    "set-value": "2.0.0",
+    "has-values": "1.0.0"
   },
   "devDependencies": {
     "del": "^3.0.0",
     "eslint": "^4.9.0",
-    "glob": "^7.1.2",
+    "glob": "^4.5.3",
     "gulp": "^3.9.1",
     "gulp-eslint": "^4.0.0",
     "rollup": "^0.50.0",
     "run-sequence": "^2.2.0",
+    "through2": "^2.0.3",
     "workbox-build": "^2.1.0"
   }
 }
