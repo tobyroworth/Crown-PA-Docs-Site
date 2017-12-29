@@ -55,7 +55,7 @@ gulp.task('default', (callback) => {
   runSequence('copy', 'sw', callback);
 });
 
-gulp.task('copy', ['copy:root', 'copy:src', 'copy:deps']);
+gulp.task('copy', ['copy:root', 'copy:src', 'copy:images', 'copy:deps']);
 
 gulp.task('full', (callback) => {
   runSequence('test', 'clean:build', 'default', callback);
@@ -69,7 +69,8 @@ gulp.task('copy:root', function() {
   return gulp.src([
     'index.html',
     'manifest.json',
-    'node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js'
+    'node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js',
+    'favicon.ico'
   ], {base: '.'})
   .pipe(gulp.dest(`${BUILD_DIR}/`));
 });
@@ -77,6 +78,13 @@ gulp.task('copy:root', function() {
 gulp.task('copy:src', function() {
   return gulp.src([
     'src/**'
+  ], {base: '.'})
+  .pipe(gulp.dest(`${BUILD_DIR}/`));
+});
+
+gulp.task('copy:images', function() {
+  return gulp.src([
+    'images/**'
   ], {base: '.'})
   .pipe(gulp.dest(`${BUILD_DIR}/`));
 });

@@ -63,7 +63,9 @@
     "debug": "3.1.0",
     "has-value": "1.0.0",
     "set-value": "2.0.0",
-    "has-values": "1.0.0"
+    "has-values": "1.0.0",
+    "is-accessor-descriptor": "1.0.0",
+    "is-data-descriptor": "1.0.0"
   },
   "devDependencies": {
     "del": "^3.0.0",
