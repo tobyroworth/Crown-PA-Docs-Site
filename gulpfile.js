@@ -101,7 +101,6 @@ gulp.task('copy:deps', function() {
 gulp.task('copy:sw', function() {
   return gulp.src([
     'sw.js',
-    'node_modules/workbox-precaching/build/importScripts/workbox-precaching.prod.v2.1.0.js',
     'node_modules/idb-keyval/idb-keyval.js'
   ], {base: '.'})
   .pipe(gulp.dest(BUILD_DIR));
