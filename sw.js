@@ -86,7 +86,9 @@ self.addEventListener('fetch', function(event) {
       let response = staleWhileRevalidate(event, 'github').then((resp) => {
         
         let fresh = resp.fresh.then((freshResp) => {
-          cacheGithubTree(freshResp.clone());
+          if (freshResp.ok) {
+            cacheGithubTree(freshResp.clone());
+          }
           return freshResp;
         }).catch(console.error);
         
@@ -117,17 +119,42 @@ self.addEventListener('fetch', function(event) {
 async function staleWhileRevalidate(event, cachename) {
   let cache = await caches.open(cachename || 'precache');
   
+  let response = await cache.match(event.request.url);
+  
   // set up revalidation request
-  let fetchPromise = fetch(event.request)
+  
+  let fetchHeaders = duplicateHeaders(event.request.headers);
+  
+  if (response) {
+    let ETag = response.headers.get('ETag');
+    fetchHeaders.append('If-None-Match', ETag);
+  }
+  
+  let mode = event.request.mode;
+  
+  if (mode === 'navigate') {
+    mode = 'same-origin';
+  }
+  
+  let req = new Request(event.request.url, {
+    method: event.request.method,
+    headers: fetchHeaders,
+    mode: mode,
+    credentials: event.request.credentials,
+    redirect: 'manual'
+  });
+  
+  let fetchPromise = fetch(req)
   .then((networkResponse) => {
-    cache.put(event.request.url, networkResponse.clone());
+    if (networkResponse.ok) {
+      cache.put(event.request.url, networkResponse.clone());
+    }
     return networkResponse;
   })
   .catch((err) => {
     console.info(err);
   });
   
-  let response = cache.match(event.request.url);
   return {
     stale: response,
     fresh: fetchPromise
@@ -152,19 +179,55 @@ async function cacheGithubTree(response) {
     if (leaf.type === 'blob') {
       
       let url = leaf.url.replace(/\/git\/.*/, `/contents/${leaf.path}`);
-      let sha = idbKeyval.get(url);
       
-      if (sha !== leaf.sha) {
+      let idbVal = await idbKeyval.get(url);
+      
+      let urlData = {
+        sha: ""
+      };
+      
+      if (idbVal) {
+        urlData = JSON.parse(idbVal);
+      }
+      
+      if (urlData.sha !== leaf.sha) {
         
-        let resp = await fetch(url, github.init);
+        let headers = duplicateHeaders(github.init.headers);
         
-        let cache = await caches.open('github');
+        if (urlData.ETag) {
+          headers.append('If-None-Match', urlData.ETag);
+        }
         
-        await cache.put(url, resp);
+        let reqParams = Object.assign({}, github.init);
         
-        idbKeyval.set(url, leaf.sha);
+        reqParams.headers = headers;
+        
+        let resp = await fetch(url, reqParams);
+        
+        if (resp.ok) {
+        
+          let cache = await caches.open('github');
+          
+          await cache.put(url, resp);
+  
+          urlData.sha = leaf.sha;
+          urlData.ETag = resp.headers.get('ETag');
+  
+          idbKeyval.set(url, JSON.stringify(urlData));
+        }
         
       }
     }
   });
+}
+
+function duplicateHeaders(headers) {
+  
+  let duplicate = new Headers();
+  
+  for (let header of headers.entries()) {
+    duplicate.set(header[0], header[1]);
+  }
+  
+  return duplicate;
 }

@@ -90,6 +90,12 @@ export class GithubDocsList extends PolymerElement {
     };
   }
   
+  static get observers() {
+    return [
+      '_siteChanged(site.user, site.repo)'
+    ];
+  }
+  
   async getTree() {
     if (!this.site.user || !this.site.repo) {
       return;
@@ -114,6 +120,14 @@ export class GithubDocsList extends PolymerElement {
       let event = new CustomEvent('open-doc', {detail: {path: e.detail.item.path}});
       this.dispatchEvent(event);
     }
+  }
+  
+  _siteChanged(user, repo) {
+    
+    this.github.user = user;
+    this.github.repo = repo;
+    
+    this.getTree();
   }
   
   _cleanPath(path) {
