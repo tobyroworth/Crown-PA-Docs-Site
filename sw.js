@@ -1,4 +1,4 @@
-importScripts('/node_modules/workbox-precaching/build/importScripts/workbox-precaching.prod.v2.1.0.js');
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.0.0-alpha.3/workbox-sw.js');
 /* global workbox */
 
 importScripts('/node_modules/idb-keyval/idb-keyval.js');
@@ -7,12 +7,13 @@ importScripts('/node_modules/idb-keyval/idb-keyval.js');
 importScripts('/sw_manifest.js');
 /* global __file_manifest */
 
-const revCacheManager = new workbox.precaching.RevisionedCacheManager({cacheName: 'precache'});
-
-revCacheManager.addToCacheList({
-  // eslint-disable-next-line camelcase
-  revisionedFiles: __file_manifest
+workbox.setConfig({
+  debug: false
 });
+
+const precacheController = new workbox.precaching.PrecacheController('precache');
+
+precacheController.addToCacheList(__file_manifest);
 
 /**
  * Remove once module workers arrive, this was lazy
@@ -35,27 +36,38 @@ github.init = {
  * ^^ end
  */
 
-self.addEventListener('install', function(event) {
-  console.info('Service Worker installing...');
+self.addEventListener('install', function() {
+  console.info('⚙️ Service Worker installing...');
   
   let install = () => {
-    return revCacheManager.install()
+    return new Promise((resolve) => {
+      // find a way to avoid this, it's stupid, and here to fix https://github.com/tobyroworth/Crown-PA-Docs-Site/issues/16
+      setTimeout(resolve, 3000);
+    }).then(() => {
+      precacheController.install();
+    })
     .then(() => {
-      console.info('Service Worker install  & precache successful');
+      console.info('⚙️ Service Worker install  & precache successful');
     })
     .catch((err) => {
-      console.error(`Service Worker install failed: ${err}`);
-      return Promise.reject(err);
+      console.error(` ⚙️ Service Worker precache failed: ${err}`);
+      self.registration.unregister().then((success) => {
+        if (success) {
+          console.log('⚙️ Service Worker has been unregistered');
+        } else {
+          console.error('⚙️ Service Worker could not be unregistered');
+        }
+      });
     });
   };
   
-  event.waitUntil(install());
+  install();
   
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    revCacheManager.cleanup()
+    precacheController.cleanup()
   );
 });
 
@@ -174,6 +186,8 @@ async function cacheGithubTree(response) {
   let tree = parsed.tree;
       
   // start downloading files into cache
+  
+  console.info('⚙️ Service Worker is caching docs from Github');
   
   tree.forEach(async (leaf) => {
     if (leaf.type === 'blob') {
