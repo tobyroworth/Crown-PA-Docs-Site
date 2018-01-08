@@ -48,7 +48,7 @@ const template = `
 </style>
 <div class="item title">Contents</div>
 <iron-selector selected='[[path]]' attr-for-selected='path' on-iron-select='openDocs'>
-  <template is="dom-repeat" items="{{tree}}">
+  <template id="tree" is="dom-repeat" items="{{tree}}" filter='_filterTree'>
     <div path="[[_cleanPath(item.path)]]" type="[[item.type]]" class$="item [[item.type]]">[[_leaf(item.path)]]</div>
   </template>
 </iron-selector>
@@ -75,7 +75,8 @@ export class GithubDocsList extends PolymerElement {
   static get properties() {
     return {
       path: {
-        type: String
+        type: String,
+        observer: '_pathChanged'
       },
       tree: {
         type: Array,
@@ -97,6 +98,11 @@ export class GithubDocsList extends PolymerElement {
   }
   
   async getTree() {
+    
+    if (!this.site) {
+      return;
+    }
+    
     if (!this.site.user || !this.site.repo) {
       return;
     }
@@ -120,6 +126,10 @@ export class GithubDocsList extends PolymerElement {
       let event = new CustomEvent('open-doc', {detail: {path: e.detail.item.path}});
       this.dispatchEvent(event);
     }
+    if (e.detail.item.type === 'tree') {
+      let event = new CustomEvent('open-doc', {detail: {path: e.detail.item.path}});
+      this.dispatchEvent(event);
+    }
   }
   
   _siteChanged(user, repo) {
@@ -128,6 +138,21 @@ export class GithubDocsList extends PolymerElement {
     this.github.repo = repo;
     
     this.getTree();
+  }
+  
+  _pathChanged(path) {
+    if (path) {
+      this.$.tree.render();
+    }
+  }
+  
+  _filterTree(item) {
+    
+    let path = this.path.replace(/_/g, ' ');
+    
+    let branchTest = new RegExp(`${this.site.rootPath}/*${path}/([^/])+$`);
+    
+    return branchTest.test(item.path);
   }
   
   _cleanPath(path) {
