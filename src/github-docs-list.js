@@ -46,7 +46,7 @@ const template = `
   height: 64px;
 }
 </style>
-<div class="item title">Contents</div>
+<div class="item title">[[_heading(path)]]</div>
 <iron-selector selected='[[path]]' attr-for-selected='path' on-iron-select='openDocs'>
   <template id="tree" is="dom-repeat" items="{{tree}}" filter='_filterTree'>
     <div path="[[_cleanPath(item.path)]]" type="[[item.type]]" class$="item [[item.type]]">[[_leaf(item.path)]]</div>
@@ -143,6 +143,14 @@ export class GithubDocsList extends PolymerElement {
   _pathChanged(path) {
     if (path) {
       this.$.tree.render();
+    }
+  }
+  
+  _heading(path) {
+    if (!path || path === "") {
+      return "Contents";
+    } else {
+      return this._leaf(`${this.site.rootPath}${path}`);
     }
   }
   
