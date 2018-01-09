@@ -5,6 +5,13 @@
 
 Documentation viewer for Crown PA, built using Polymer 3.0 with the Github API for the data layer.
 
+## Running the Site Locally
+
+1. Install firebase-tools `yarn global add firebase-tools`
+2. Install dependencies `yarn install`
+3. Build `gulp full`
+4. Run dev server `firebase serve`
+
 ## Live Site
 
 Live site available at https://crownpa-docs.firebaseapp.com/
