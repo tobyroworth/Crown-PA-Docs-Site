@@ -91,6 +91,11 @@ export class GithubDoc extends PolymerElement {
     let url = this.github.getContentsURL(path);
     let response = await this.github.getFromGithub(url, 'HTML');
     this.$.docs.innerHTML = response;
+    
+    this.$.docs.querySelectorAll('img').forEach((img) => {
+      img.src = `https://raw.githubusercontent.com/${this.site.user}/${this.site.repo}/master${new URL(img.src).pathname}`;
+    });
+    
     this.$.spinner.classList.remove('spin');
   }
 }
