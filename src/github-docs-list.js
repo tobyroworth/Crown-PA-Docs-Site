@@ -18,6 +18,9 @@ const template = `
   background-color: limegreen;
   border-radius: 2px;
 }
+.tree::before {
+  content: '▶ ';
+}
 .blob {
   background-color: whitesmoke;
   border-radius: 2px;
@@ -46,10 +49,10 @@ const template = `
   height: 64px;
 }
 </style>
-<div class="item title">[[_heading(path)]]</div>
-<iron-selector selected='[[path]]' attr-for-selected='path' on-iron-select='openDocs'>
+<div class="item title" path='[[menuPath]]' on-click='openUp'>[[_heading(menuPath)]]</div>
+<iron-selector selected='[[fullPath]]' attr-for-selected='path' on-iron-select='openDocs'>
   <template id="tree" is="dom-repeat" items="{{tree}}" filter='_filterTree'>
-    <div path="[[_cleanPath(item.path)]]" type="[[item.type]]" class$="item [[item.type]]">[[_leaf(item.path)]]</div>
+    <div path="[[item.path]]" type="[[item.type]]" class$="item [[item.type]]">[[_leaf(item.path)]]</div>
   </template>
 </iron-selector>
 `;
@@ -77,6 +80,13 @@ export class GithubDocsList extends PolymerElement {
       path: {
         type: String,
         observer: '_pathChanged'
+      },
+      menuPath: {
+        type: String,
+        observer: '_menuPathChanged'
+      },
+      fullPath: {
+        type: String
       },
       tree: {
         type: Array,
@@ -117,19 +127,42 @@ export class GithubDocsList extends PolymerElement {
     
     this.tree = tree;
     
+    this._pathChanged(this.path);
+    
     let event = new CustomEvent('tree-loaded');
     this.dispatchEvent(event);
   }
   
+  openUp(e) {
+    
+    let path = e.target.path;
+    
+    path = path.replace(/\/$/, '');
+    
+    path = path.substr(0, path.lastIndexOf('/'));
+    
+    this.menuPath = path;
+  }
+  
   openDocs(e) {
     if (e.detail.item.type === 'blob') {
-      let event = new CustomEvent('open-doc', {detail: {path: e.detail.item.path}});
+      let event = new CustomEvent('open-doc', {detail: {path: this._cleanPath(e.detail.item.path)}});
       this.dispatchEvent(event);
     }
     if (e.detail.item.type === 'tree') {
-      let event = new CustomEvent('open-doc', {detail: {path: e.detail.item.path}});
-      this.dispatchEvent(event);
+      this.menuPath = e.detail.item.path;
     }
+  }
+  
+  getFullPath(path) {
+    
+    let regPath = new RegExp(path.replace(/_/g, ' '));
+    
+    let pathItem = this.tree.find((item) => {
+      return regPath.test(item.path);
+    });
+    
+    return pathItem.path;
   }
   
   _siteChanged(user, repo) {
@@ -142,23 +175,41 @@ export class GithubDocsList extends PolymerElement {
   
   _pathChanged(path) {
     if (path) {
+      if (this.tree.length > 0) {
+        this.fullPath = this.getFullPath(path);
+        if (/\.md$/.exec(this.fullPath)) {
+          this.menuPath = this.fullPath.substr(0, this.fullPath.lastIndexOf('/'));
+        } else {
+          this.menuPath = this.fullPath;
+        }
+      }
+    }
+  }
+  
+  _menuPathChanged(path) {
+    if (path) {
       this.$.tree.render();
     }
   }
   
   _heading(path) {
-    if (!path || path === "") {
+    if (!path || path === "" || path === this.site.rootPath) {
       return "Contents";
     } else {
-      return this._leaf(`${this.site.rootPath}${path}`);
+      let leaf = this._leaf(path);
+      return `▲ ${leaf}`;
     }
   }
   
   _filterTree(item) {
     
-    let path = this.path.replace(/_/g, ' ');
+    if (!this.menuPath) {
+      return true;
+    }
     
-    let branchTest = new RegExp(`${this.site.rootPath}/*${path}/([^/])+$`);
+    let path = this.menuPath.replace(/_/g, ' ');
+    
+    let branchTest = new RegExp(`${path}/([^/])+$`);
     
     return branchTest.test(item.path);
   }
