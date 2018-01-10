@@ -14,11 +14,6 @@ const workboxBuild = require('workbox-build');
 
 const eslint = require('gulp-eslint');
 
-const uglifyes = require('uglify-es');
-const composer = require('gulp-uglify/composer');
-
-const uglify = composer(uglifyes, console);
-
 const BUILD_DIR = 'build/';
 
 function dependencies() {
@@ -100,7 +95,6 @@ gulp.task('copy:deps', function() {
   
   return gulp.src('src/**.js', {base: '.'})
   .pipe(dependencies())
-  .pipe(uglify({}))
   .pipe(gulp.dest(`${BUILD_DIR}/`));
 });
 
