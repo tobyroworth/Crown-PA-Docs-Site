@@ -859,10 +859,6 @@ color-support@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/color-support/-/color-support-1.1.3.tgz#93834379a1cc9a0c61f82f52f0d04322251bd5a2"
 
-commander@~2.12.1:
-  version "2.12.2"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.12.2.tgz#0f5946c427ed9ec0d91a46bb9def53e54650e555"
-
 component-emitter@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/component-emitter/-/component-emitter-1.2.1.tgz#137918d6d78283f7df7a6b7c5a63e140e69425e6"
@@ -968,7 +964,7 @@ end-of-stream@1.4.1, end-of-stream@~0.1.5:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/end-of-stream/-/end-of-stream-1.4.1.tgz#ed29634d19baba463b6ce6b80a37213eab71ec43"
   dependencies:
-    once "^1.4.0"
+    once "~1.3.0"
 
 escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5:
   version "1.0.5"
@@ -1355,18 +1351,6 @@ gulp-eslint@^4.0.0:
   dependencies:
     eslint "^4.0.0"
     gulp-util "^3.0.8"
-
-gulp-uglify@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/gulp-uglify/-/gulp-uglify-3.0.0.tgz#0df0331d72a0d302e3e37e109485dddf33c6d1ca"
-  dependencies:
-    gulplog "^1.0.0"
-    has-gulplog "^0.1.0"
-    lodash "^4.13.1"
-    make-error-cause "^1.1.1"
-    through2 "^2.0.0"
-    uglify-js "^3.0.5"
-    vinyl-sourcemaps-apply "^0.2.0"
 
 gulp-util@^3.0.0, gulp-util@^3.0.8:
   version "3.0.8"
@@ -1811,16 +1795,6 @@ lru-cache@2, lru-cache@4.1.1, lru-cache@^4.0.1:
   dependencies:
     pseudomap "^1.0.2"
     yallist "^2.1.2"
-
-make-error-cause@^1.1.1:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/make-error-cause/-/make-error-cause-1.2.2.tgz#df0388fcd0b37816dff0a5fb8108939777dcbc9d"
-  dependencies:
-    make-error "^1.2.0"
-
-make-error@^1.2.0:
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/make-error/-/make-error-1.3.2.tgz#8762ffad2444dd8ff1f7c819629fa28e24fea1c4"
 
 make-iterator@^1.0.0:
   version "1.0.0"
@@ -2514,20 +2488,6 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-uglify-es@^3.3.5:
-  version "3.3.5"
-  resolved "https://registry.yarnpkg.com/uglify-es/-/uglify-es-3.3.5.tgz#cf7e695da81999f85196b15e2978862f13212f88"
-  dependencies:
-    commander "~2.12.1"
-    source-map "~0.6.1"
-
-uglify-js@^3.0.5:
-  version "3.3.5"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.3.5.tgz#4c4143dfe08e8825746675cc49a6874a933b543e"
-  dependencies:
-    commander "~2.12.1"
-    source-map "~0.6.1"
-
 unc-path-regex@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/unc-path-regex/-/unc-path-regex-0.1.2.tgz#e73dd3d7b0d7c5ed86fbac6b0ae7d8c6a69d50fa"
@@ -2614,12 +2574,6 @@ vinyl-fs@^0.3.0:
     through2 "^0.6.1"
     vinyl "^0.4.0"
 
-vinyl-sourcemaps-apply@^0.2.0:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/vinyl-sourcemaps-apply/-/vinyl-sourcemaps-apply-0.2.1.tgz#ab6549d61d172c2b1b87be5c508d239c8ef87705"
-  dependencies:
-    source-map "^0.5.1"
-
 vinyl@0.5.3, vinyl@^0.4.0, vinyl@^0.5.0:
   version "0.5.3"
   resolved "https://registry.yarnpkg.com/vinyl/-/vinyl-0.5.3.tgz#b0455b38fc5e0cf30d4325132e461970c2091cde"
@@ -2648,6 +2602,24 @@ workbox-build@^2.1.2:
     lodash.template "^4.4.0"
     mkdirp "^0.5.1"
     workbox-sw "^2.1.2"
+
+workbox-core@^3.0.0-alpha.3:
+  version "3.0.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/workbox-core/-/workbox-core-3.0.0-alpha.3.tgz#d76b27a0173f210d6bf61fea07f28918feb2663f"
+
+workbox-precaching@^3.0.0-alpha.3:
+  version "3.0.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/workbox-precaching/-/workbox-precaching-3.0.0-alpha.3.tgz#869f8389cb710ca0ed471bdf64955dfd8484c502"
+  dependencies:
+    workbox-core "^3.0.0-alpha.3"
+
+workbox-routing@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/workbox-routing/-/workbox-routing-2.1.0.tgz#3b18f91aa8a5503b4c9795b80b309d3abcfeb4b5"
+
+workbox-runtime-caching@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/workbox-runtime-caching/-/workbox-runtime-caching-2.0.3.tgz#c5ac65c948c1645ea7b8e02e484e06f93c1e6b70"
 
 workbox-sw@^2.1.2:
   version "2.1.2"
