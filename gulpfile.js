@@ -118,7 +118,7 @@ gulp.task('copy:legacyDeps', async function() {
   .pipe(babel({
     presets: [`${process.cwd()}/node_modules/@babel/preset-env`]
   }))
-  .pipe(gulp.dest(`${BUILD_DIR}/crown-legacy-bundle.js`));
+  .pipe(gulp.dest(`${BUILD_DIR}/crown-bundle-legacy`));
 });
 
 gulp.task('copy:sw', function() {
