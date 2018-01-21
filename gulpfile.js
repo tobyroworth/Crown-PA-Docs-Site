@@ -14,10 +14,11 @@ const workboxBuild = require('workbox-build');
 
 const eslint = require('gulp-eslint');
 
-const uglifyes = require('uglify-es');
-const composer = require('gulp-uglify/composer');
+// const uglifyes = require('uglify-es');
+// const composer = require('gulp-uglify/composer');
+// const uglify = composer(uglifyes, console);
 
-const uglify = composer(uglifyes, console);
+const babel = require('gulp-babel');
 
 const BUILD_DIR = 'build/';
 
@@ -60,7 +61,7 @@ gulp.task('default', (callback) => {
   runSequence('copy', 'sw', callback);
 });
 
-gulp.task('copy', ['copy:root', 'copy:src', 'copy:images', 'copy:deps']);
+gulp.task('copy', ['copy:root', 'copy:src', 'copy:images', 'copy:deps', 'copy:legacyDeps']);
 
 gulp.task('full', (callback) => {
   runSequence('test', 'clean:build', 'default', callback);
@@ -96,12 +97,28 @@ gulp.task('copy:images', function() {
 
 gulp.task('copy:deps', function() {
   
-  // let deps = await dependencies();
-  
   return gulp.src('src/**.js', {base: '.'})
   .pipe(dependencies())
-  .pipe(uglify({}))
+  // .pipe(uglify({}))
   .pipe(gulp.dest(`${BUILD_DIR}/`));
+});
+
+gulp.task('copy:legacyDeps', async function() {
+  
+  const bundle = await rollup.rollup({
+    input: 'crown-legacy.js'
+  });
+
+  await bundle.write({
+    file: `${BUILD_DIR}/crown-bundle.js`,
+    format: 'iife'
+  });
+  
+  return gulp.src(`${BUILD_DIR}/crown-bundle.js`, {base: '.'})
+  .pipe(babel({
+    presets: [`${process.cwd()}/node_modules/@babel/preset-env`]
+  }))
+  .pipe(gulp.dest(`${BUILD_DIR}/crown-legacy-bundle.js`));
 });
 
 gulp.task('copy:sw', function() {

@@ -64,13 +64,36 @@
     "is-accessor-descriptor": "1.0.0",
     "is-data-descriptor": "1.0.0",
     "end-of-stream": "1.4.1",
-    "source-map": "0.6.1"
+    "source-map": "0.6.1",
+    "is-glob": "3.1.0",
+    "micromatch": "3.1.4",
+    "is-extglob": "2.1.1",
+    "arr-diff": "4.0.0",
+    "array-unique": "0.3.2",
+    "braces": "2.3.0",
+    "extglob": "2.0.3",
+    "fill-range": "4.0.0",
+    "expand-brackets": "2.1.4",
+    "jsesc": "2.5.1",
+    "babylon": "7.0.0-beta.37",
+    "globals": "11.1.0",
+    "to-fast-properties": "2.0.0",
+    "babel-code-frame": "7.0.0-beta.3",
+    "@babel/template": "7.0.0-beta.38",
+    "@babel/traverse": "7.0.0-beta.38",
+    "@babel/types": "7.0.0-beta.38",
+    "@babel/helper-function-name": "7.0.0-beta.38",
+    "@babel/helper-get-function-arity": "7.0.0-beta.38",
+    "@babel/code-frame": "7.0.0-beta.38"
   },
   "devDependencies": {
+    "@babel/core": "^7.0.0-beta.37",
+    "@babel/preset-env": "^7.0.0-beta.37",
     "del": "^3.0.0",
     "eslint": "^4.9.0",
     "glob": "^4.5.3",
     "gulp": "^3.9.1",
+    "gulp-babel": "^8.0.0-beta.0",
     "gulp-eslint": "^4.0.0",
     "gulp-uglify": "^3.0.0",
     "rollup": "^0.50.0",
@@ -78,5 +101,8 @@
     "through2": "^2.0.3",
     "uglify-es": "^3.3.5",
     "workbox-build": "^2.1.2"
+  },
+  "peerDependencies": {
+    "babel-core": "^7.0.0-beta.37"
   }
 }
