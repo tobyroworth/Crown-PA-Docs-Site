@@ -75,7 +75,7 @@ gulp.task('copy:root', function() {
   return gulp.src([
     'index.html',
     'manifest.json',
-    'node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js',
+    'node_modules/@webcomponents/webcomponentsjs/webcomponents-*.js',
     'favicon.ico'
   ], {base: '.'})
   .pipe(gulp.dest(`${BUILD_DIR}/`));
