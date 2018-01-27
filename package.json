@@ -167,12 +167,10 @@
     "gulp": "^3.9.1",
     "gulp-babel": "^8.0.0-beta.0",
     "gulp-eslint": "^4.0.0",
-    "gulp-uglify": "^3.0.0",
     "rollup": "^0.50.0",
     "run-sequence": "^2.2.0",
     "superstatic": "^5.0.1",
     "through2": "^2.0.3",
-    "uglify-es": "^3.3.5",
     "workbox-build": "^2.1.2"
   },
   "peerDependencies": {
