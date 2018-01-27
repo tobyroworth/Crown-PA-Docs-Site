@@ -149,7 +149,9 @@ gulp.task('test', ['lint']);
 gulp.task('lint', () => {
   return gulp.src([
     '**/*.js',
+    '!node_modules',
     '!node_modules/**',
+    '!build',
     '!build/**'
   ])
   .pipe(eslint())
@@ -170,6 +172,7 @@ gulp.task('serve', () => {
 });
 
 gulp.task('serve:superstatic', () => {
+  // eslint-disable-next-line global-require
   const superstatic = require('superstatic').server;
 
   const options = {
@@ -183,6 +186,7 @@ gulp.task('serve:superstatic', () => {
 });
 
 gulp.task('serve:firebase', () => {
+  // eslint-disable-next-line global-require
   const firebase = require('firebase-tools');
   
   const options = {

@@ -114,7 +114,7 @@
     "iconv-lite": "0.4.19",
     "tmp": "0.0.33",
     "user-home": "2.0.0",
-    "strip-bom": "3.0.0",
+    "strip-bom": "2.0.0",
     "commander": "2.13.0",
     "async": "2.6.0",
     "update-notifier": "1.0.3",
