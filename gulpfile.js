@@ -156,3 +156,40 @@ gulp.task('lint', () => {
   .pipe(eslint.format())
   .pipe(eslint.failAfterError());
 });
+
+gulp.task('serve', () => {
+  
+  switch (process.env.CROWNPASERVER) {
+    case 'firebase':
+      return gulp.start(`serve:firebase`);
+    case 'superstatic':
+    default:
+      return gulp.start(`serve:superstatic`);
+  }
+  
+});
+
+gulp.task('serve:superstatic', () => {
+  const superstatic = require('superstatic').server;
+
+  const options = {
+    port: process.env.PORT || 80,
+    host: process.env.IP || '127.0.0.1'
+  };
+
+  const app = superstatic(options);
+  
+  return app.listen();
+});
+
+gulp.task('serve:firebase', () => {
+  const firebase = require('firebase-tools');
+  
+  const options = {
+    port: process.env.PORT || 80,
+    host: process.env.IP || '127.0.0.1'
+  };
+  
+  return firebase.serve(options);
+  
+});

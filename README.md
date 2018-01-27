@@ -7,10 +7,20 @@ Documentation viewer for Crown PA, built using Polymer 3.0 with the Github API f
 
 ## Running the Site Locally
 
-1. Install firebase-tools `yarn global add firebase-tools`
-2. Install dependencies `yarn install`
-3. Build `gulp full`
-4. Run dev server `firebase serve`
+1. Install dependencies `yarn install`
+2. Build `gulp full`
+3. Run dev server `gulp serve`
+
+The dev server defaults to using [`superstatic`](firebase/superstatic), but can also [`firebase serve`](firebase/firebase-tools).
+
+The server can be chosen on a per-run basis using `gulp serve:superstatic` or `gulp serve:firebase`.
+
+To change the default server set the `CROWNPASERVER` environmental variable to `firebase` or `superstatic`.
+
+```
+export CROWNPASERVER=firebase
+gulp serve
+```
 
 ## Live Site
 
