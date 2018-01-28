@@ -14,6 +14,12 @@ const workboxBuild = require('workbox-build');
 
 const eslint = require('gulp-eslint');
 
+// const uglifyes = require('uglify-es');
+// const composer = require('gulp-uglify/composer');
+// const uglify = composer(uglifyes, console);
+
+const babel = require('gulp-babel');
+
 const BUILD_DIR = 'build/';
 
 function dependencies() {
@@ -55,7 +61,7 @@ gulp.task('default', (callback) => {
   runSequence('copy', 'sw', callback);
 });
 
-gulp.task('copy', ['copy:root', 'copy:src', 'copy:images', 'copy:deps']);
+gulp.task('copy', ['copy:root', 'copy:src', 'copy:images', 'copy:deps', 'copy:legacyDeps']);
 
 gulp.task('full', (callback) => {
   runSequence('test', 'clean:build', 'default', callback);
@@ -69,7 +75,9 @@ gulp.task('copy:root', function() {
   return gulp.src([
     'index.html',
     'manifest.json',
-    'node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js',
+    'node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js',
+    'node_modules/@webcomponents/webcomponentsjs/webcomponents-*.js',
+    'node_modules/regenerator-runtime/runtime.js',
     'favicon.ico'
   ], {base: '.'})
   .pipe(gulp.dest(`${BUILD_DIR}/`));
@@ -91,11 +99,28 @@ gulp.task('copy:images', function() {
 
 gulp.task('copy:deps', function() {
   
-  // let deps = await dependencies();
-  
   return gulp.src('src/**.js', {base: '.'})
   .pipe(dependencies())
+  // .pipe(uglify({}))
   .pipe(gulp.dest(`${BUILD_DIR}/`));
+});
+
+gulp.task('copy:legacyDeps', async function() {
+  
+  const bundle = await rollup.rollup({
+    input: 'crown-legacy.js'
+  });
+
+  await bundle.write({
+    file: `${BUILD_DIR}/crown-bundle.js`,
+    format: 'iife'
+  });
+  
+  return gulp.src(`${BUILD_DIR}/crown-bundle.js`, {base: '.'})
+  .pipe(babel({
+    presets: [`${process.cwd()}/node_modules/@babel/preset-env`]
+  }))
+  .pipe(gulp.dest(`${BUILD_DIR}/..`));
 });
 
 gulp.task('copy:sw', function() {
@@ -126,10 +151,51 @@ gulp.task('test', ['lint']);
 gulp.task('lint', () => {
   return gulp.src([
     '**/*.js',
+    '!node_modules',
     '!node_modules/**',
+    '!build',
     '!build/**'
   ])
   .pipe(eslint())
   .pipe(eslint.format())
   .pipe(eslint.failAfterError());
+});
+
+gulp.task('serve', () => {
+  
+  switch (process.env.CROWNPASERVER) {
+    case 'firebase':
+      return gulp.start(`serve:firebase`);
+    case 'superstatic':
+    default:
+      return gulp.start(`serve:superstatic`);
+  }
+  
+});
+
+gulp.task('serve:superstatic', () => {
+  // eslint-disable-next-line global-require
+  const superstatic = require('superstatic').server;
+
+  const options = {
+    port: process.env.PORT || 80,
+    host: process.env.IP || '127.0.0.1'
+  };
+
+  const app = superstatic(options);
+  
+  return app.listen();
+});
+
+gulp.task('serve:firebase', () => {
+  // eslint-disable-next-line global-require
+  const firebase = require('firebase-tools');
+  
+  const options = {
+    port: process.env.PORT || 80,
+    host: process.env.IP || '127.0.0.1'
+  };
+  
+  return firebase.serve(options);
+  
 });
