@@ -1,6 +1,6 @@
 {
   "name": "Crown-PA-Docs-Site",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Documentation Viewer for Crown PA",
   "main": "index.html",
   "repository": "git@github.com:tobyroworth/Crown-PA-Docs-Site.git",
