@@ -105,6 +105,12 @@ export class CrownDocsApp extends PolymerElement {
               user: 'tobyroworth',
               repo: 'LivingRoomPADocs',
               rootPath: 'docs'
+            },
+            'Bishopshalt': {
+              name: 'Bishopshalt',
+              user: 'tobyroworth',
+              repo: 'BishopshaltPADocs',
+              rootPath: 'docs'
             }
           };
         }
